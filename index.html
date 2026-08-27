@@ -554,30 +554,42 @@ const PALETTE = ['#f2b13c', '#6fe3a0', '#9b8cff', '#4fc3d9', '#e2603f', '#d98cc0
 const TABS_KEY = 't151-tabs-v1';
 const WORK_DAY = { workStart: 9 * 60, workEnd: 18 * 60, hideBlended: false, delivery: 'all' };
 const SEED_TABS = [
-  { name: 'Your plan', snap: { plan: {
+  { id: 'yours', name: 'Your plan', snap: { plan: {
     y1a: ['COMP41770', 'COMP47790', 'COMP30940'],
     y1s: ['COMP41960', 'COMP47980', 'COMP47590'],
     y2a: ['COMP40370', 'COMP47780'],
     y2s: ['COMP31010', 'COMP47470', 'COMP30540'],
   }, ...WORK_DAY, hideBlended: true } },
-  { name: 'Fewest days', snap: { plan: {
+  { id: 'fewest', name: 'Fewest days', snap: { plan: {
     y1a: ['EEEN40680', 'COMP47460', 'COMP47790'],
     y1s: ['COMP31010', 'COMP47590', 'COMP40010'],
     y2a: ['COMP30940', 'COMP47780'],
     y2s: ['COMP41960', 'COMP47950', 'COMP47650'],
   }, ...WORK_DAY } },
-  { name: 'Max maths', snap: { plan: {
+  { id: 'maths', name: 'Max maths', snap: { plan: {
     y1a: ['EEEN40680', 'COMP47460', 'COMP47790'],
     y1s: ['COMP31010', 'COMP47590', 'COMP40010'],
     y2a: ['COMP30940', 'COMP30690', 'ACM40290'],
     y2s: ['COMP41960', 'COMP47950', 'COMP47650'],
   }, ...WORK_DAY } },
-  { name: 'Mon/Wed/Thu', snap: { plan: {
+  { id: 'mwt', name: 'Mon/Wed/Thu', snap: { plan: {
     y1a: ['EEEN40680', 'COMP47670', 'COMP41390'],
     y1s: ['COMP31010', 'COMP40400', 'COMP40010'],
     y2a: ['COMP30940', 'COMP30690', 'ACM40290'],
     y2s: ['MIS30010', 'COMP47590', 'COMP47470'],
   }, ...WORK_DAY } },
+  { id: 'nb-fewest', name: 'No blended · days', snap: { plan: {
+    y1a: ['COMP41730', 'COMP47780'],
+    y1s: ['COMP31010', 'COMP47590', 'COMP41680'],
+    y2a: ['COMP30940', 'COMP30690', 'ACM40290'],
+    y2s: ['COMP47990', 'MIS30010', 'COMP41960'],
+  }, ...WORK_DAY, hideBlended: true } },
+  { id: 'nb-maths', name: 'No blended · maths', snap: { plan: {
+    y1a: ['COMP47790', 'COMP47780'],
+    y1s: ['COMP31010', 'COMP47500'],
+    y2a: ['COMP30940', 'COMP30690', 'ACM40290'],
+    y2s: ['COMP47990', 'COMP41960', 'COMP47590'],
+  }, ...WORK_DAY, hideBlended: true } },
 ];
 
 const state = {
@@ -596,6 +608,7 @@ const state = {
   plan: { y1a: [], y1s: [], y2a: [], y2s: [] },
   tabs: [],
   tab: 0,
+  seeded: new Set(),
 };
 
 const byCode = new Map(MODULES.map(m => [m.code, m]));
@@ -676,12 +689,14 @@ const planKey = s => JSON.stringify((s && s.plan) || {});
 
 function save() {
   if (state.tabs[state.tab]) state.tabs[state.tab].snap = clone(snapshot());
-  try { localStorage.setItem(TABS_KEY, JSON.stringify({ tabs: state.tabs, tab: state.tab })); } catch (e) {}
+  const payload = { tabs: state.tabs, tab: state.tab, seeded: [...state.seeded] };
+  try { localStorage.setItem(TABS_KEY, JSON.stringify(payload)); } catch (e) {}
 }
 
 function readTabs(d) {
   if (!d || !Array.isArray(d.tabs) || !d.tabs.length) return false;
   state.tabs = d.tabs.map(t => ({
+    id: t.id ? String(t.id) : '',
     name: String(t.name || 'Plan'),
     snap: t.snap && typeof t.snap === 'object' ? t.snap : {},
   }));
@@ -693,7 +708,23 @@ function readTabs(d) {
 function load() {
   let stored = null;
   try { stored = JSON.parse(localStorage.getItem(TABS_KEY) || 'null'); } catch (e) {}
-  if (!readTabs(stored)) readTabs({ tabs: clone(SEED_TABS), tab: 0 });
+  const known = new Set(Array.isArray(stored && stored.seeded) ? stored.seeded.map(String) : []);
+  if (!readTabs(stored)) {
+    readTabs({ tabs: clone(SEED_TABS), tab: 0 });
+    known.clear();
+  }
+  for (const tab of state.tabs) {
+    if (tab.id) continue;
+    const seed = SEED_TABS.find(s => s.name === tab.name) ||
+      SEED_TABS.find(s => planKey(s.snap) === planKey(tab.snap));
+    if (seed && !state.tabs.some(t => t.id === seed.id)) tab.id = seed.id;
+  }
+  for (const seed of SEED_TABS) {
+    if (known.has(seed.id)) continue;
+    if (!state.tabs.some(t => t.id === seed.id)) state.tabs.push(clone(seed));
+  }
+  state.seeded = new Set(SEED_TABS.map(s => s.id));
+  for (const id of known) state.seeded.add(id);
 }
 
 function uniqueName(base) {
