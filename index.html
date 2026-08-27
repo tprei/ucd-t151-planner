@@ -597,6 +597,24 @@ const SEED_TABS = [
     y2a: ['COMP30940', 'COMP30690', 'ACM40290'],
     y2s: ['COMP47990', 'COMP41960', 'COMP47590'],
   }, ...WORK_DAY, hideBlended: true } },
+  { id: 'am-fewest', name: 'AM · fewest PM', snap: { plan: {
+    y1a: ['ACM40290', 'COMP47930'],
+    y1s: ['COMP40400', 'COMP40725'],
+    y2a: ['COMP47790', 'COMP47780', 'COMP47470'],
+    y2s: ['COMP47590', 'COMP41680', 'COMP47750'],
+  }, ...WORK_DAY, hideBlended: true } },
+  { id: 'am-quant', name: 'AM · max quant', snap: { plan: {
+    y1a: ['COMP47790', 'COMP47780'],
+    y1s: ['COMP40400', 'COMP41680'],
+    y2a: ['ACM40290', 'COMP30040', 'COMP40370'],
+    y2s: ['COMP47590', 'COMP30540', 'COMP47470', 'COMP47750'],
+  }, ...WORK_DAY, hideBlended: true } },
+  { id: 'yours-fixed', name: 'Yours, prereq fixed', snap: { plan: {
+    y1a: ['COMP47790', 'COMP47780'],
+    y1s: ['COMP31010', 'COMP47980', 'COMP47750'],
+    y2a: ['ACM40290', 'COMP30690', 'COMP30940'],
+    y2s: ['COMP41960', 'COMP47590', 'COMP47470'],
+  }, ...WORK_DAY, hideBlended: true } },
 ];
 
 const state = {
@@ -879,6 +897,7 @@ function tabMetrics(snap, t) {
   const codes = (snap.plan && snap.plan[t.id]) || [];
   const days = new Set();
   let mins = 0;
+  let last = 0;
   for (const code of codes) {
     const m = byCode.get(code);
     if (!m) continue;
@@ -886,11 +905,12 @@ function tabMetrics(snap, t) {
       if (isExamish(s.activity)) continue;
       days.add(s.day);
       mins += s.end - s.start;
+      last = Math.max(last, s.end);
     }
   }
   const cr = TERMS.reduce((n, tt) => n + ((snap.plan && snap.plan[tt.id]) || [])
     .reduce((k, code) => k + (byCode.get(code) ? byCode.get(code).credits : 0), 0), 0);
-  return { days: [...days].sort().map(d => DAY_SHORT[d]), hours: mins / 60, credits: cr };
+  return { days: [...days].sort().map(d => DAY_SHORT[d]), hours: mins / 60, credits: cr, last: last };
 }
 
 function renderTabBar() {
@@ -905,7 +925,7 @@ function renderTabBar() {
     b.setAttribute('aria-selected', String(active));
     b.title = 'Open this plan. Double-click to rename.';
     b.innerHTML = '<b>' + escapeHtml(tab.name) + '</b><span>' + met.credits + ' cr &middot; ' +
-      (met.days.length ? met.days.join('/') + ' &middot; ' + met.hours.toFixed(1) + 'h' : 'empty in ' + escapeHtml(t.short)) +
+      (met.days.length ? met.days.join('/') + ' &middot; ' + met.hours.toFixed(1) + 'h &middot; to ' + hhmm(met.last) : 'empty in ' + escapeHtml(t.short)) +
       '</span>';
     b.onclick = () => openTab(i);
     b.ondblclick = () => renameTab(i);
