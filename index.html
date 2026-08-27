@@ -203,6 +203,65 @@
   }
   .workload b { font-family: 'JetBrains Mono', monospace; font-weight: 500; color: var(--text); }
   .workload .split { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+  dialog#importDlg {
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--text);
+    max-width: 680px; width: calc(100vw - 32px); padding: 18px 20px;
+  }
+  dialog#importDlg::backdrop { background: rgba(4,5,7,.7); }
+  dialog#importDlg h3 { font-size: 21px; margin-bottom: 6px; }
+  dialog#importDlg p { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+  dialog#importDlg textarea {
+    width: 100%; background: var(--ink); color: var(--text); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.5;
+  }
+  .dlg-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+  #importMsg { margin-top: 8px; }
+
+  .out { max-width: 1080px; }
+  .out h2 { font-size: 26px; }
+  .out .lede { color: var(--muted); font-size: 12.5px; margin: 6px 0 18px; line-height: 1.6; }
+  .out .totals { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .out .tot {
+    border: 1px solid var(--line); border-radius: 10px; padding: 9px 13px; min-width: 148px;
+    background: linear-gradient(180deg, rgba(255,255,255,.03), transparent);
+  }
+  .out .tot span { display: block; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .out .tot strong { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 500; }
+  .out .term { border-top: 1px solid var(--line); padding: 16px 0 4px; }
+  .out .term h3 { font-size: 20px; }
+  .out .term .span { color: var(--muted); font-size: 11.5px; font-family: 'JetBrains Mono', monospace; }
+  .out .term .cols { display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-top: 10px; }
+  .out table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .out th {
+    text-align: left; font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--line); padding: 6px 8px 6px 0;
+  }
+  .out td { border-bottom: 1px solid var(--line-soft); padding: 7px 8px 7px 0; vertical-align: top; }
+  .out td.code { font-family: 'JetBrains Mono', monospace; color: var(--amber); white-space: nowrap; }
+  .out td.slots { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .out td.slots b { color: #ffb9a6; font-weight: 500; }
+  .out .daylist { font-size: 12px; line-height: 1.7; }
+  .out .daylist div { display: flex; gap: 8px; }
+  .out .daylist .d { font-family: 'JetBrains Mono', monospace; color: var(--amber); width: 34px; flex: none; }
+  .out .hours { margin-top: 8px; font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .out .hours b { font-family: 'JetBrains Mono', monospace; color: var(--text); font-weight: 500; }
+  .out .ask { border: 1px solid rgba(242,177,60,.4); background: rgba(242,177,60,.07); border-radius: 10px; padding: 10px 13px; margin: 18px 0 6px; font-size: 12.5px; line-height: 1.6; }
+
+  @media print {
+    body { background: #fff; color: #111; height: auto; overflow: visible; display: block; }
+    body::before, header.top, .bar, aside, #calView, #allView, footer.foot { display: none !important; }
+    main { display: block; }
+    section.stage { overflow: visible; padding: 0; }
+    #outView { display: block !important; }
+    .out h2, .out .term h3 { color: #000; }
+    .out .lede, .out .term .span, .out .hours, .out td.slots { color: #444; }
+    .out .tot, .out .ask, .out .term { border-color: #bbb; background: none; }
+    .out .tot strong, .out .hours b, .out .daylist .d, .out td.code { color: #000; }
+    .out td.slots { color: #333; }
+    .out td.slots b { color: #000; font-weight: 700; }
+    .out td, .out th { border-color: #ddd; }
+    .out .term { break-inside: avoid; }
+  }
   footer.foot a { color: var(--amber); }
   .mobile-only { display: none !important; }
   .daychips { display: none; gap: 6px; margin: 0 0 10px; }
@@ -277,6 +336,12 @@
     table.all th { position: static; }
     .c-tri, .c-streams { display: none; }
     #allView { overflow-x: auto; }
+    .out h2 { font-size: 22px; }
+    .out .term .cols { grid-template-columns: 1fr; gap: 12px; }
+    .out .totals .tot { flex: 1 1 40%; min-width: 130px; }
+    .out table { table-layout: fixed; }
+    .out td.slots, .out td { word-break: break-word; }
+    .out .daylist div { flex-wrap: wrap; }
     footer.foot { font-size: 11px; }
   }
 
@@ -328,6 +393,7 @@
     <div class="pills" id="viewSel">
       <button data-view="cal" aria-pressed="true">Calendar</button>
       <button data-view="all" aria-pressed="false">All modules</button>
+      <button data-view="out" aria-pressed="false">Summary</button>
     </div>
   </div>
   <div class="group mobile-only">
@@ -337,8 +403,10 @@
     <label for="planSel">Plan</label>
     <select id="planSel"></select>
     <button class="ghost-btn" id="saveBtn">Save</button>
+    <button class="ghost-btn" id="importBtn">Import</button>
     <button class="ghost-btn" id="shareBtn">Share link</button>
     <button class="ghost-btn" id="copyBtn">Copy text</button>
+    <button class="ghost-btn" id="icsBtn">Calendar file</button>
     <button class="ghost-btn" id="resetBtn">Reset</button>
   </div>
 </div>
@@ -408,11 +476,27 @@
       </div>
       <table class="all" id="allTable"></table>
     </div>
+    <div id="outView" class="hidden">
+      <div id="outBody"></div>
+    </div>
 <footer class="foot">
   The MSc is 90 credits: 60 taught credits plus a 30-credit project, dissertation or work placement in the summer, which is not timetabled here. The T151 curriculum tells part-time students to take about 30 taught credits a year split across Autumn and Spring. UCD Academic Regulations 3.6 and 3.7 cap a trimester at 30 required and 40 registered credits, and count one credit as roughly 25 hours of student effort (20&ndash;30). Module list and session times: <a href="https://hub.ucd.ie/usis/!W_HU_MENU.P_PUBLISH?p_tag=COURSE&amp;MAJR=T151" target="_blank" rel="noreferrer">T151 curriculum</a> option lists A&ndash;E plus the &ldquo;When is this module offered?&rdquo; block and the Mode of Delivery field on each module page (AY 2026/27). Week numbers to calendar dates: <a href="https://www.ucd.ie/registry/t4media/Week%20ranges%202026.pdf" target="_blank" rel="noreferrer">UCD Registry week ranges</a> and the <a href="https://www.ucd.ie/students/t4media/Academic%20Calendars%2025-%2031.pdf" target="_blank" rel="noreferrer">Academic Council calendars 2025&ndash;2031</a>. Autumn uses weeks 1&ndash;12, Spring 19&ndash;34 with the study break at 27&ndash;28. Blended modules are hidden by default and struck through when shown. Where a module title contradicts the hub&rsquo;s delivery field, both are printed. Exam sittings are drawn hatched; end-of-trimester exams are left out of the work-hour counts, mid-term sittings are not.
 </footer>
   </section>
 </main>
+
+<dialog id="importDlg">
+  <form method="dialog">
+    <h3>Import a plan</h3>
+    <p>Paste a share link, or the text produced by <b>Copy text</b>. Module codes and the work-day line are all this needs.</p>
+    <textarea id="importText" rows="12" spellcheck="false" placeholder="UCD T151 part-time plan, September 2027 intake&#10;Work day assumed 09:00-18:00&#10;&#10;Sep – Dec 2027 · Autumn trimester (15 cr)&#10;  COMP41770  Blockchain &amp; Decentralisation …"></textarea>
+    <div id="importMsg" class="empty"></div>
+    <div class="dlg-actions">
+      <button class="ghost-btn" value="cancel">Cancel</button>
+      <button class="ghost-btn" id="importGo" type="button">Import</button>
+    </div>
+  </form>
+</dialog>
 
 
 <script id="moduleData" type="application/json">[{"code":"COMP41730","title":"Text Analytics (5 credits)","credits":5,"trimester":"Autumn","streams":["Artificial Intelligence","Open electives"],"sessions":[],"delivery":"Online"},{"code":"COMP47530","title":"Exploring Ruby (Mixed Delivery)","credits":5,"trimester":"Autumn","streams":["Software Engineering","Open electives"],"sessions":[],"delivery":"Online"},{"code":"EEEN40280","title":"Digital & Embedded Systems","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[],"delivery":"Blended"},{"code":"MEEN40820","title":"Technical Comms (Online)","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[],"delivery":"Blended"},{"code":"COMP47990","title":"Machine Learning with Python (Online)","credits":5,"trimester":"Spring","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Spring","activity":"Tutorial","day":2,"start":1020,"end":1070,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"Online"},{"code":"COMP30940","title":"Information Security","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":960,"end":1070,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Tutorial","day":4,"start":960,"end":1070,"weeks":[3,6,9,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP31010","title":"Recommender Systems","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":3,"start":960,"end":1070,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":4,"start":960,"end":1070,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41400","title":"Multi-Agent Systems","credits":5,"trimester":"Autumn","streams":["Artificial Intelligence","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":960,"end":1070,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Practical","day":3,"start":960,"end":1070,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP41990","title":"Foundations of Cog. Psychology","credits":10,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":5,"start":960,"end":1070,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"Not yet recorded"},{"code":"IS40560","title":"Digital Libraries","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":4,"start":960,"end":1070,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"EEEN40680","title":"Intro. to Quantum Computing","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Tutorial","day":3,"start":900,"end":1010,"weeks":[],"allWeeks":true}],"delivery":"Blended"},{"code":"GEOG40820","title":"GIS Principles and Applications","credits":10,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":3,"start":900,"end":1010,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"MIS30010","title":"Decision Analytics","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":900,"end":1070,"weeks":[20,21,23,24,25,26,29,30,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP40400","title":"Bioinformatics","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":4,"start":840,"end":890,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"LING40500","title":"Cognitive Linguistics","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":840,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47460","title":"Machine Learning (Blended Delivery)","credits":5,"trimester":"Autumn","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Autumn","activity":"Tutorial","day":5,"start":780,"end":890,"weeks":[6,10],"allWeeks":false}],"delivery":"Blended"},{"code":"IS40970","title":"AI & Ethics","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":5,"start":780,"end":890,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47670","title":"Data Science in Python (MD)","credits":5,"trimester":"Autumn and Spring (separate)","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Autumn","activity":"Practical","day":4,"start":720,"end":770,"weeks":[1,4,7,10],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":4,"start":720,"end":770,"weeks":[20,23,26,29],"allWeeks":false}],"delivery":"Blended"},{"code":"IS30370","title":"Digital Media Ethics (formerly Information Ethics)","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":3,"start":720,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"PHIL41980","title":"Foundations of Cognitive Science","credits":10,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Seminar","day":3,"start":660,"end":770,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"SOC41130","title":"AI and Society","credits":10,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":660,"end":770,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41390","title":"Connectionist Computing","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":3,"start":600,"end":650,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":4,"start":1020,"end":1070,"weeks":[],"allWeeks":true}],"delivery":"Blended"},{"code":"IS30380","title":"Digital Storytelling","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":600,"end":710,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"IS41510","title":"Social Networks Online and Off","credits":10,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":600,"end":710,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41960","title":"Advanced Information Security","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":540,"end":650,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47970","title":"Information Visualisation (Blended Delivery)","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Laboratory","day":3,"start":540,"end":650,"weeks":[20,21,22,23,24,25,26,30,31,32],"allWeeks":false},{"tri":"Spring","activity":"Exam Mid-term (ALU)","day":3,"start":780,"end":890,"weeks":[33],"allWeeks":false}],"delivery":"Online"},{"code":"COMP30110","title":"Spatial Information Systems","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":900,"end":950,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":2,"start":900,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP30250","title":"Parallel Computing","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Practical","day":2,"start":900,"end":1010,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":4,"start":900,"end":950,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":5,"start":960,"end":1010,"weeks":[],"allWeeks":true}],"delivery":"Blended"},{"code":"COMP47860","title":"Ethical Hacking","credits":5,"trimester":"Spring","streams":["Software Engineering","Open electives"],"sessions":[{"tri":"Spring","activity":"Practical","day":1,"start":900,"end":1010,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":5,"start":960,"end":1070,"weeks":[19,28,34],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP30690","title":"Information Theory","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":780,"end":890,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":3,"start":960,"end":1070,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP41720","title":"Distributed Systems","credits":5,"trimester":"Autumn","streams":["Distributed Systems","Software Engineering","Open electives"],"sessions":[{"tri":"Autumn","activity":"Practical","day":2,"start":780,"end":890,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":3,"start":900,"end":950,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":5,"start":780,"end":890,"weeks":[],"allWeeks":true}],"delivery":"Blended"},{"code":"COMP42000","title":"Sustainable Computing for AI","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":960,"end":1010,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":3,"start":780,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Tutorial","day":4,"start":780,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP47700","title":"Speech and Audio","credits":5,"trimester":"Spring","streams":["Artificial Intelligence","Open electives"],"sessions":[{"tri":"Spring","activity":"Practical","day":1,"start":780,"end":890,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":5,"start":840,"end":950,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"SOC40640","title":"Social Simulation: Methods and Models","credits":10,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":780,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":4,"start":840,"end":890,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP40660","title":"Advances in Wireless Networking","credits":5,"trimester":"Spring","streams":["Distributed Systems","Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":960,"end":1070,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":5,"start":720,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP47500","title":"Advanced Data Structures in Java (O/L)","credits":10,"trimester":"Spring","streams":["Software Engineering","Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":3,"start":840,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":5,"start":720,"end":830,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"Online"},{"code":"ACM40290","title":"Numerical Algorithms","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":660,"end":710,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":3,"start":720,"end":770,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Tutorial","day":4,"start":720,"end":770,"weeks":[2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP30390","title":"Enterprise, Innovation & Entre","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":660,"end":710,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":2,"start":780,"end":830,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":4,"start":960,"end":1070,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP40610","title":"Information Visualisation","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":3,"start":660,"end":770,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":5,"start":780,"end":890,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP40725","title":"Introduction to Relational Databases and SQL Programming","credits":10,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":660,"end":770,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":5,"start":780,"end":890,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41670","title":"Software Engineering","credits":5,"trimester":"Autumn","streams":["Software Engineering","Open electives"],"sessions":[{"tri":"Autumn","activity":"Computer Aided Lab","day":1,"start":780,"end":890,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":4,"start":660,"end":710,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":4,"start":900,"end":950,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP41740","title":"Human-Centred AI","credits":5,"trimester":"Autumn","streams":["Artificial Intelligence","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":3,"start":660,"end":710,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":4,"start":960,"end":1010,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41760","title":"Artificial/Human Intelligence","credits":5,"trimester":"Autumn","streams":["Artificial Intelligence","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":4,"start":660,"end":710,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":4,"start":720,"end":770,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP41770","title":"Blockchain & Decentralisation","credits":5,"trimester":"Autumn","streams":["Distributed Systems","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":2,"start":660,"end":770,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":5,"start":900,"end":1010,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47590","title":"Advanced Machine Learning","credits":5,"trimester":"Spring","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Spring","activity":"Laboratory","day":4,"start":660,"end":710,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":4,"start":840,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47790","title":"Optimisation","credits":5,"trimester":"Autumn","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":3,"start":720,"end":830,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Tutorial","day":5,"start":660,"end":770,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP47950","title":"Quantum Machine Learning","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":660,"end":770,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Tutorial","day":5,"start":660,"end":710,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"MEEN40670","title":"Technical Communication","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":780,"end":830,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Small Group","day":5,"start":660,"end":770,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP30040","title":"Networks and Internet Systems","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":2,"start":840,"end":890,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":3,"start":600,"end":650,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":4,"start":780,"end":890,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP40010","title":"Performance of Computer Systems","credits":5,"trimester":"Spring","streams":["Distributed Systems","Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":3,"start":900,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":4,"start":600,"end":650,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP47480","title":"Contemporary Software Development","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":1,"start":720,"end":770,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Exam","day":2,"start":1080,"end":1250,"weeks":[33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":5,"start":600,"end":650,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Laboratory","day":5,"start":840,"end":950,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47780","title":"Cloud Computing","credits":10,"trimester":"Autumn","streams":["Distributed Systems","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":4,"start":600,"end":710,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Practical","day":4,"start":720,"end":830,"weeks":[1,2,3,4,5,6,7,8,9,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Exam","day":4,"start":720,"end":830,"weeks":[10],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP20350","title":"Object-Oriented Programming","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":4,"start":540,"end":650,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Laboratory","day":5,"start":720,"end":830,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP30540","title":"Game Development","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Practical","day":1,"start":780,"end":890,"weeks":[20,21,23,24,25,26,29,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":3,"start":540,"end":590,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":3,"start":720,"end":770,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP30960","title":"Human Computer Interaction","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":2,"start":720,"end":770,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":5,"start":540,"end":650,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":5,"start":660,"end":710,"weeks":[],"allWeeks":true}],"delivery":"Blended"},{"code":"COMP40370","title":"Data Mining","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":2,"start":780,"end":830,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Exam","day":3,"start":780,"end":890,"weeks":[6,11],"allWeeks":false},{"tri":"Autumn","activity":"Practical","day":3,"start":780,"end":890,"weeks":[1,2,3,4,5,7,8,9,10,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":4,"start":540,"end":590,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Practical","day":5,"start":660,"end":770,"weeks":[],"allWeeks":true}],"delivery":"On Campus"},{"code":"COMP41680","title":"Data Science in Python","credits":5,"trimester":"Spring","streams":["Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":3,"start":540,"end":590,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":4,"start":540,"end":590,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47470","title":"Big Data Programming","credits":5,"trimester":"Autumn and Spring (separate)","streams":["Machine Learning & Data Science","Distributed Systems","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":540,"end":650,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Practical","day":5,"start":540,"end":650,"weeks":[],"allWeeks":true},{"tri":"Spring","activity":"Lecture","day":1,"start":540,"end":650,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":1,"start":660,"end":770,"weeks":[20,21,23,24,25,26,29,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47650","title":"Deep Learning","credits":5,"trimester":"Spring","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":840,"end":950,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Tutorial","day":5,"start":540,"end":590,"weeks":[20,21,22,23,24,25,26,30,31,32,33],"allWeeks":false}],"delivery":"Blended"},{"code":"COMP47750","title":"Machine Learning with Python","credits":5,"trimester":"Autumn and Spring (separate)","streams":["Machine Learning & Data Science","Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":2,"start":540,"end":590,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":4,"start":600,"end":650,"weeks":[1,2,3,4,5,6,7,8,9,10,11,12],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":2,"start":540,"end":590,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":4,"start":600,"end":650,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47930","title":"Augmented and Virtual Reality","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":540,"end":650,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Practical","day":1,"start":780,"end":890,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"COMP47980","title":"Generative AI: Language Models","credits":5,"trimester":"Spring","streams":["Artificial Intelligence","Open electives"],"sessions":[{"tri":"Spring","activity":"Lecture","day":2,"start":960,"end":1010,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Lecture","day":2,"start":1020,"end":1070,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false},{"tri":"Spring","activity":"Practical","day":3,"start":540,"end":650,"weeks":[20,21,22,23,24,25,26,29,30,31,32,33],"allWeeks":false}],"delivery":"On Campus"},{"code":"EEEN40050","title":"Wireless Systems","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Laboratory","day":1,"start":900,"end":1010,"weeks":[4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":2,"start":540,"end":590,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":3,"start":840,"end":890,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Laboratory","day":3,"start":960,"end":1070,"weeks":[5,7,9,11],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":4,"start":540,"end":590,"weeks":[1,2,3,4,5,6,7,8,9,10,12],"allWeeks":false}],"delivery":"On Campus"},{"code":"EEEN40060","title":"Digital Communications","credits":5,"trimester":"Autumn","streams":["Open electives"],"sessions":[{"tri":"Autumn","activity":"Lecture","day":1,"start":540,"end":590,"weeks":[1,2,3,4,5,6,7,9,10,11,12],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":3,"start":780,"end":830,"weeks":[],"allWeeks":true},{"tri":"Autumn","activity":"Lecture","day":4,"start":960,"end":1010,"weeks":[1,2,5,8,10],"allWeeks":false},{"tri":"Autumn","activity":"Tutorial","day":4,"start":960,"end":1070,"weeks":[4,7,11],"allWeeks":false},{"tri":"Autumn","activity":"Lecture","day":5,"start":780,"end":830,"weeks":[3,4,6,7,9,10,12],"allWeeks":false}],"delivery":"On Campus"}]</script>
@@ -453,7 +537,16 @@ const PALETTE = ['#f2b13c', '#6fe3a0', '#9b8cff', '#4fc3d9', '#e2603f', '#d98cc0
 const STORE_KEY = 't151-planner-v1';
 const PLANS_KEY = 't151-plans-v1';
 const PRESETS = {
-  'Manager proposal — 60 cr over 2 years': {
+  'Balanced — 15 cr every trimester': {
+    plan: {
+      y1a: ['COMP41770', 'COMP47790', 'COMP30940'],
+      y1s: ['COMP41960', 'COMP47980', 'COMP47590'],
+      y2a: ['COMP40370', 'COMP47780'],
+      y2s: ['COMP31010', 'COMP47470', 'COMP30540'],
+    },
+    workStart: 9 * 60, workEnd: 18 * 60, hideBlended: true, delivery: 'all',
+  },
+  'Earlier draft — 15/25/10/10': {
     plan: {
       y1a: ['COMP41770', 'COMP30690', 'COMP47790'],
       y1s: ['COMP41960', 'COMP40725', 'SOC40640'],
@@ -981,6 +1074,96 @@ function renderCalendar() {
     : '';
 }
 
+function workWindows(termId, season) {
+  const byDay = new Map();
+  for (const m of planned(termId))
+    for (const s of seasonSessions(m, season)) {
+      if (!(s.start < state.workEnd && s.end > state.workStart)) continue;
+      if (!byDay.has(s.day)) byDay.set(s.day, []);
+      byDay.get(s.day).push({ code: m.code, s });
+    }
+  for (const list of byDay.values()) list.sort((a, b) => a.s.start - b.s.start);
+  return byDay;
+}
+
+function workHoursPerWeek(termId, season) {
+  let mins = 0;
+  for (const [, list] of workWindows(termId, season))
+    for (const e of list) if (!isFinalExam(e.s.activity)) mins += e.s.end - e.s.start;
+  return mins / 60;
+}
+
+function workHoursTotal(termId, season) {
+  let mins = 0;
+  for (const m of planned(termId))
+    for (const s of seasonSessions(m, season)) {
+      if (!(s.start < state.workEnd && s.end > state.workStart)) continue;
+      mins += (s.end - s.start) * weeksOf(s, season).length;
+    }
+  return mins / 60;
+}
+
+function renderOutput() {
+  const round = (n, d = 1) => (Math.round(n * 10 ** d) / 10 ** d).toString();
+  const totalCr = TERMS.reduce((n, t) => n + credits(t.id), 0);
+  const totalWorkH = TERMS.reduce((n, t) => n + workHoursTotal(t.id, t.season), 0);
+  const totalEffort = totalCr * HOURS_PER_CREDIT;
+  const totalConflicts = TERMS.reduce((n, t) => n + conflicts(t.id, t.season).length, 0);
+  const blended = TERMS.flatMap(t => planned(t.id).filter(isBlended).map(m => m.code));
+  const win = workWindowValid() ? hhmm(state.workStart) + '–' + hhmm(state.workEnd) : 'not set';
+
+  const terms = TERMS.map(t => {
+    const list = planned(t.id);
+    if (!list.length) return '<div class="term"><h3>' + t.label + '</h3><div class="span">' + t.span + '</div><p class="empty">Nothing placed.</p></div>';
+    const rows = list.map(m => {
+      const ss = seasonSessions(m, t.season);
+      const slots = ss.length
+        ? ss.map(s => {
+            const txt = s.activity + ' ' + DAY_SHORT[s.day] + ' ' + hhmm(s.start) + '–' + hhmm(s.end) +
+              ' (' + (s.allWeeks ? 'all wks' : (s.weeks.length > 8 ? s.weeks.length + ' wks' : 'wks ' + s.weeks.join(','))) + ')';
+            return (s.start < state.workEnd && s.end > state.workStart) ? '<b>' + escapeHtml(txt) + '</b>' : escapeHtml(txt);
+          }).join('<br>')
+        : '<i>no sessions published</i>';
+      return '<tr><td class="code">' + m.code + '</td><td>' + escapeHtml(m.title) +
+        '<div style="color:var(--muted);font-size:11px">' + escapeHtml(m.delivery) + '</div></td>' +
+        '<td class="mono">' + m.credits + '</td><td class="slots">' + slots + '</td></tr>';
+    }).join('');
+    const wins = [...workWindows(t.id, t.season).entries()].sort((a, b) => a[0] - b[0]).map(([day, es]) =>
+      '<div><span class="d">' + DAY_SHORT[day] + '</span><span>' + es.map(e =>
+        hhmm(e.s.start) + '–' + hhmm(e.s.end) + ' ' + e.code + (isFinalExam(e.s.activity) ? ' exam' : '')).join(', ') + '</span></div>').join('');
+    const cr = credits(t.id);
+    const c = contactHours(t.id, t.season);
+    const conf = conflicts(t.id, t.season);
+    return '<div class="term"><h3>' + t.label + ' — ' + cr + ' credits</h3>' +
+      '<div class="span">' + t.span + '</div>' +
+      '<div class="cols"><div><table><thead><tr><th>Code</th><th>Module</th><th>Cr</th><th>Sessions (bold = inside your work day)</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<div><div class="daylist">' + (wins || '<span class="empty">Nothing inside your work day.</span>') + '</div>' +
+      '<div class="hours">' +
+      'work-day hours <b>' + round(workHoursPerWeek(t.id, t.season)) + ' h/week</b>, <b>' + round(workHoursTotal(t.id, t.season)) + ' h</b> across the trimester<br>' +
+      'timetabled overall <b>' + round(c.totalH) + ' h</b><br>' +
+      'total effort <b>' + cr * HOURS_PER_CREDIT + ' h</b> ≈ <b>' + round(cr * HOURS_PER_CREDIT / TRIMESTER_WEEKS) + ' h/week</b>' +
+      (cr > 40 ? '<br><b>over the 40-credit trimester limit</b>' : '') +
+      (conf.length ? '<br><b>' + conf.length + ' timetable clash' + (conf.length > 1 ? 'es' : '') + '</b>' : '') +
+      '</div></div></div></div>';
+  }).join('');
+
+  document.getElementById('outBody').innerHTML =
+    '<div class="out"><h2>UCD T151 part-time plan — September 2027 intake</h2>' +
+    '<div class="lede">Work day assumed <b>' + win + '</b>. Session times from the AY 2026/27 catalogue, the newest UCD publishes; term dates from the Academic Council calendar approved to 2030/31. Bold sessions fall inside your work day. The 30-credit summer project, dissertation or work placement that completes the 90-credit MSc is not timetabled here.</div>' +
+    '<div class="totals">' +
+    '<div class="tot"><span>Taught credits</span><strong>' + totalCr + '/60</strong></div>' +
+    '<div class="tot"><span>Total effort</span><strong>' + totalEffort + ' h</strong></div>' +
+    '<div class="tot"><span>Inside work hours</span><strong>' + round(totalWorkH) + ' h</strong></div>' +
+    '<div class="tot"><span>Equivalent work days</span><strong>' + round(totalWorkH / 7.5) + '</strong></div>' +
+    '<div class="tot"><span>Timetable clashes</span><strong>' + totalConflicts + '</strong></div>' +
+    '</div>' +
+    (blended.length ? '<div class="ask">Blended delivery in this plan: <b>' + blended.join(', ') + '</b>.</div>' : '') +
+    terms +
+    '<div class="ask">Ask: shifted hours on the days listed above, averaging <b>' + round(TERMS.reduce((n, t) => n + workHoursPerWeek(t.id, t.season), 0) / 4) +
+    ' h a week</b> during the 12 teaching weeks of each trimester, roughly <b>' + round(totalWorkH / 7.5) +
+    ' working days</b> in total over the two years. Nothing outside teaching weeks: mid-December to mid-January and mid-May to early September are clear.</div></div>';
+}
+
 let sortKey = 'fit', sortDir = 1;
 function renderAll() {
   const season = term().season;
@@ -1057,8 +1240,10 @@ function render() {
   renderAll();
   renderLedger();
   renderPlanSelect();
+  renderOutput();
   document.getElementById('calView').classList.toggle('hidden', state.view !== 'cal');
   document.getElementById('allView').classList.toggle('hidden', state.view !== 'all');
+  document.getElementById('outView').classList.toggle('hidden', state.view !== 'out');
   document.querySelectorAll('#viewSel button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === state.view)));
   measureStickyOffsets();
 }
@@ -1128,6 +1313,120 @@ document.getElementById('saveBtn').onclick = () => {
   notify('Saved "' + name.trim() + '" in this browser.');
   render();
   document.getElementById('planSel').value = 'saved:' + name.trim();
+};
+
+function parsePlanText(raw) {
+  const text = raw.replace(/\u2013|\u2014/g, '-').replace(/\r/g, '');
+  const link = /[#&]plan=([A-Za-z0-9\-_]+)/.exec(raw);
+  if (link) return { snapshot: decodePlan(link[1]), skipped: [], source: 'link' };
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('{')) return { snapshot: JSON.parse(trimmed), skipped: [], source: 'json' };
+
+  const plan = { y1a: [], y1s: [], y2a: [], y2s: [] };
+  const skipped = [];
+  const labels = TERMS.map(t => ({ id: t.id, season: t.season, needle: t.label.replace(/\u2013|\u2014/g, '-').toLowerCase() }));
+  let current = null;
+  for (const line of text.split('\n')) {
+    const low = line.toLowerCase();
+    const hit = labels.find(l => low.includes(l.needle));
+    if (hit) { current = hit; continue; }
+    const code = /^\s{1,6}([A-Z]{2,4}\d{5})\b/.exec(line);
+    if (!code) continue;
+    const m = byCode.get(code[1]);
+    if (!current) { skipped.push(code[1] + ' (no trimester heading above it)'); continue; }
+    if (!m) { skipped.push(code[1] + ' (not on the T151 lists)'); continue; }
+    if (!offeredIn(m, current.season)) { skipped.push(code[1] + ' (not offered in ' + current.season + ')'); continue; }
+    if (Object.values(plan).some(list => list.includes(code[1]))) { skipped.push(code[1] + ' (already placed)'); continue; }
+    plan[current.id].push(code[1]);
+  }
+  const win = /work day assumed\s*(\d{1,2}:\d{2})\s*(?:-|to)\s*(\d{1,2}:\d{2})/i.exec(text);
+  const snap = { plan };
+  if (win) { snap.workStart = toMin(win[1]); snap.workEnd = toMin(win[2]); }
+  const placed = Object.values(plan).reduce((n, l) => n + l.length, 0);
+  if (!placed) throw new Error('No module codes found under a trimester heading.');
+  return { snapshot: snap, skipped, source: 'text' };
+}
+
+document.getElementById('importBtn').onclick = () => {
+  document.getElementById('importMsg').textContent = '';
+  document.getElementById('importDlg').showModal();
+};
+document.getElementById('importGo').onclick = () => {
+  const msg = document.getElementById('importMsg');
+  const raw = document.getElementById('importText').value;
+  try {
+    const { snapshot: snap, skipped, source } = parsePlanText(raw);
+    applySnapshot(snap);
+    syncControls();
+    save();
+    const placed = TERMS.reduce((n, t) => n + state.plan[t.id].length, 0);
+    notify('Imported ' + placed + ' modules from pasted ' + source + (skipped.length ? '. Skipped: ' + skipped.join('; ') : '') + '.');
+    render();
+    document.getElementById('importDlg').close();
+  } catch (e) {
+    msg.textContent = 'Could not read that: ' + e.message;
+  }
+};
+
+function icsDate(t, week, day, minutes) {
+  const base = mondayOf(t, week).getTime() + (day - 1) * 86400000;
+  const d = new Date(base);
+  const pad = n => String(n).padStart(2, '0');
+  return [d.getUTCFullYear(), pad(d.getUTCMonth() + 1), pad(d.getUTCDate()), 'T',
+    pad(Math.floor(minutes / 60)), pad(minutes % 60), '00'].join('');
+}
+
+function buildIcs() {
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//T151 planner//EN', 'CALSCALE:GREGORIAN',
+    'BEGIN:VTIMEZONE', 'TZID:Europe/Dublin',
+    'BEGIN:STANDARD', 'DTSTART:19701025T020000', 'RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU',
+    'TZOFFSETFROM:+0100', 'TZOFFSETTO:+0000', 'TZNAME:GMT', 'END:STANDARD',
+    'BEGIN:DAYLIGHT', 'DTSTART:19700329T010000', 'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=-1SU',
+    'TZOFFSETFROM:+0000', 'TZOFFSETTO:+0100', 'TZNAME:IST', 'END:DAYLIGHT', 'END:VTIMEZONE',
+  ];
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  let n = 0;
+  for (const t of TERMS)
+    for (const m of planned(t.id))
+      for (const s of seasonSessions(m, t.season))
+        for (const week of weeksOf(s, t.season)) {
+          n++;
+          lines.push(
+            'BEGIN:VEVENT',
+            'UID:' + t.id + '-' + m.code + '-' + week + '-' + s.day + '-' + s.start + '@t151planner',
+            'DTSTAMP:' + stamp,
+            'DTSTART;TZID=Europe/Dublin:' + icsDate(t, week, s.day, s.start),
+            'DTEND;TZID=Europe/Dublin:' + icsDate(t, week, s.day, s.end),
+            'SUMMARY:' + m.code + ' ' + s.activity,
+            'DESCRIPTION:' + m.title.replace(/[,;]/g, '') + ' (' + m.credits + ' cr, ' + m.delivery + ') - ' + t.label + ' week ' + week,
+            'LOCATION:UCD Belfield',
+            'END:VEVENT');
+        }
+  lines.push('END:VCALENDAR');
+  const fold = line => {
+    if (line.length <= 74) return line;
+    const parts = [line.slice(0, 74)];
+    for (let i = 74; i < line.length; i += 73) parts.push(' ' + line.slice(i, i + 73));
+    return parts.join('\r\n');
+  };
+  return { ics: lines.map(fold).join('\r\n'), events: n };
+}
+
+document.getElementById('icsBtn').onclick = () => {
+  const { ics, events } = buildIcs();
+  const b = document.getElementById('icsBtn');
+  if (!events) { b.textContent = 'Nothing to export'; setTimeout(() => { b.textContent = 'Calendar file'; }, 1600); return; }
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 't151-plan.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  b.textContent = events + ' events';
+  setTimeout(() => { b.textContent = 'Calendar file'; }, 1800);
 };
 document.getElementById('shareBtn').onclick = async () => {
   const url = shareUrl();
